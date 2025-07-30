@@ -178,7 +178,7 @@ facefusion force-download
 
 ```bash
 # 基本的な顔交換
-facefusion run --source source.jpg --target target.mp4 --output-path output.mp4
+facefusion run
 
 # バッチ処理
 facefusion batch-run --source source.jpg --target target_folder --output-path output_folder
@@ -191,22 +191,22 @@ facefusion benchmark
 
 ### 完全版（すべての最適設定）
 ```bash
-facefusion run --source source_female.jpg --target target_video.mp4 --output-path output_video.mp4 --face-detector-model many --face-detector-size 640x640 --face-detector-score 0.7 --face-detector-angles 0 90 180 270 --face-landmarker-model many --face-landmarker-score 0.8 --face-selector-mode reference --face-selector-order best-worst --face-selector-gender female --face-selector-age-start 18 --face-selector-age-end 50 --reference-face-distance 0.6 --face-mask-types box occlusion area --face-mask-areas upper-face lower-face --face-mask-regions skin left-eye right-eye mouth --face-mask-blur 0.3 --face-mask-padding 10 10 10 10 --face-swapper-model inswapper_128 --face-swapper-pixel-boost 1024x1024 --face-enhancer-model gfpgan_1.4 --face-enhancer-blend 80 --face-enhancer-weight 1.0 --frame-enhancer-model ultra_sharp_x4 --frame-enhancer-blend 60 --output-video-encoder libx264 --output-video-preset slow --output-video-quality 95 --execution-providers cuda cpu --execution-thread-count 4 --execution-queue-count 2
+facefusion run --face-detector-model many --face-detector-size 640x640 --face-detector-score 0.7 --face-detector-angles 0 90 180 270 --face-landmarker-model many --face-landmarker-score 0.8 --face-selector-mode reference --face-selector-order best-worst --face-selector-gender female --face-selector-age-start 18 --face-selector-age-end 50 --reference-face-distance 0.6 --face-mask-types box occlusion area --face-mask-areas upper-face lower-face --face-mask-regions skin left-eye right-eye mouth --face-mask-blur 0.3 --face-mask-padding 10 10 10 10 --face-swapper-model inswapper_128 --face-swapper-pixel-boost 1024x1024 --face-enhancer-model gfpgan_1.4 --face-enhancer-blend 80 --face-enhancer-weight 1.0 --frame-enhancer-model ultra_sharp_x4 --frame-enhancer-blend 60 --output-video-encoder libx264 --output-video-preset slow --output-video-quality 95 --execution-providers cuda cpu --execution-thread-count 4 --execution-queue-count 2
 ```
 
 ### 簡略版（基本的な設定）
 ```bash
-facefusion run --source source_female.jpg --target target_video.mp4 --output-path output_video.mp4 --face-detector-model many --face-detector-score 0.7 --face-selector-mode reference --face-swapper-model inswapper_128 --face-swapper-pixel-boost 1024x1024 --face-enhancer-model gfpgan_1.4 --output-video-quality 95
+facefusion run --face-detector-model many --face-detector-score 0.7 --face-selector-mode reference --face-swapper-model inswapper_128 --face-swapper-pixel-boost 1024x1024 --face-enhancer-model gfpgan_1.4 --output-video-quality 95
 ```
 
 ### 高品質版（品質重視）
 ```bash
-facefusion run --source source_female.jpg --target target_video.mp4 --output-path output_video.mp4 --face-detector-model many --face-detector-score 0.7 --face-selector-mode reference --face-swapper-model inswapper_128 --face-swapper-pixel-boost 1024x1024 --face-enhancer-model gfpgan_1.4 --face-enhancer-blend 80 --face-enhancer-weight 1.0 --frame-enhancer-model ultra_sharp_x4 --output-video-quality 95 --output-video-preset slow
+facefusion run --face-detector-model many --face-detector-score 0.7 --face-selector-mode reference --face-swapper-model inswapper_128 --face-swapper-pixel-boost 1024x1024 --face-enhancer-model gfpgan_1.4 --face-enhancer-blend 80 --face-enhancer-weight 1.0 --frame-enhancer-model ultra_sharp_x4 --output-video-quality 95 --output-video-preset slow
 ```
 
 ### 高速版（処理速度重視）
 ```bash
-facefusion run --source source_female.jpg --target target_video.mp4 --output-path output_video.mp4 --face-detector-model yolo_face --face-detector-score 0.5 --face-swapper-model inswapper_128 --face-swapper-pixel-boost 512x512 --output-video-quality 85 --output-video-preset fast --execution-thread-count 8
+facefusion run --face-detector-model yolo_face --face-detector-score 0.5 --face-swapper-model inswapper_128 --face-swapper-pixel-boost 512x512 --output-video-quality 85 --output-video-preset fast --execution-thread-count 8
 ```
 
 ## 主要オプション説明
