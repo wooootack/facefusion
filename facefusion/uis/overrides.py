@@ -5,15 +5,17 @@ from facefusion.temp_helper import create_temp_directory, get_temp_file_path
 
 
 def convert_video_to_playable_mp4(video_path : str) -> str:
-	video_file_size = get_file_size(video_path)
-	max_file_size = 512 * 1024 * 1024
+	# ファイルサイズ制限を完全に無効化
+	# video_file_size = get_file_size(video_path)
+	# max_file_size = 1024 * 1024 * 1024  # 1GB
 
 	create_temp_directory(video_path)
 	temp_video_path = get_temp_file_path(video_path)
 	commands = ffmpeg_builder.set_input(video_path)
 
-	if video_file_size > max_file_size:
-		commands.extend(ffmpeg_builder.set_video_duration(10))
+	# 動画の長さ制限を完全に無効化
+	# if video_file_size > max_file_size:
+	# 	commands.extend(ffmpeg_builder.set_video_duration(30))
 
 	commands.extend(ffmpeg_builder.force_output(temp_video_path))
 
