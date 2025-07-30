@@ -41,7 +41,15 @@ After installation, you can run FaceFusion from anywhere using:
 facefusion
 ```
 
-For detailed installation instructions and troubleshooting, see [PIPX_INSTALL.md](PIPX_INSTALL.md).
+### Quick Start Example
+
+For high-quality face swapping on videos:
+
+```bash
+facefusion run --source source.jpg --target target.mp4 --output-path output.mp4 --face-swapper-model inswapper_128 --face-enhancer-model gfpgan_1.4 --output-video-quality 95
+```
+
+For detailed installation instructions, troubleshooting, and optimal settings, see [PIPX_INSTALL.md](PIPX_INSTALL.md).
 
 
 Usage
