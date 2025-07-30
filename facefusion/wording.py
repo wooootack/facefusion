@@ -206,7 +206,6 @@ WORDING : Dict[str, Any] =\
 		# misc
 		'log_level': 'adjust the message severity displayed in the terminal',
 		'halt_on_error': 'halt the program once an error occurred',
-		'skip_content_analysis': 'skip NSFW content analysis',
 		# run
 		'run': 'run the program',
 		'headless_run': 'run the program in headless mode',

@@ -134,7 +134,6 @@ def apply_args(args : Args, apply_state_item : ApplyStateItem) -> None:
 	# misc
 	apply_state_item('log_level', args.get('log_level'))
 	apply_state_item('halt_on_error', args.get('halt_on_error'))
-	apply_state_item('skip_content_analysis', args.get('skip_content_analysis'))
 	# jobs
 	apply_state_item('job_id', args.get('job_id'))
 	apply_state_item('job_status', args.get('job_status'))

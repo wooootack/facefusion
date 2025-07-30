@@ -243,8 +243,7 @@ def create_log_level_program() -> ArgumentParser:
 	program = ArgumentParser(add_help = False)
 	group_misc = program.add_argument_group('misc')
 	group_misc.add_argument('--log-level', help = wording.get('help.log_level'), default = config.get_str_value('misc', 'log_level', 'info'), choices = facefusion.choices.log_levels)
-	group_misc.add_argument('--skip-content-analysis', help = wording.get('help.skip_content_analysis'), action = 'store_true', default = config.get_bool_value('misc', 'skip_content_analysis'))
-	job_store.register_job_keys([ 'log_level', 'skip_content_analysis' ])
+	job_store.register_job_keys([ 'log_level' ])
 	return program
 
 
