@@ -129,14 +129,27 @@ def common_pre_check() -> bool:
 
 	content_analyser_content = inspect.getsource(content_analyser).encode()
 	is_valid = hash_helper.create_hash(content_analyser_content) == 'b159fd9d'
+	logger.debug('Content analyser hash check: ' + str(is_valid), __name__)
 
-	return all(module.pre_check() for module in common_modules)
+	for module in common_modules:
+		logger.debug('Checking module: ' + module.__name__, __name__)
+		if not module.pre_check():
+			logger.debug('Module check failed: ' + module.__name__, __name__)
+			return False
+		logger.debug('Module check passed: ' + module.__name__, __name__)
+
+	return True
 
 
 def processors_pre_check() -> bool:
-	for processor_module in get_processors_modules(state_manager.get_item('processors')):
+	processors = state_manager.get_item('processors')
+	logger.debug('Checking processors: ' + str(processors), __name__)
+	for processor_module in get_processors_modules(processors):
+		logger.debug('Checking processor module: ' + processor_module.__name__, __name__)
 		if not processor_module.pre_check():
+			logger.debug('Processor module check failed: ' + processor_module.__name__, __name__)
 			return False
+		logger.debug('Processor module check passed: ' + processor_module.__name__, __name__)
 	return True
 
 
