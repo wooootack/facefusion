@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "facefusion"
+version = "1.0.0"
+description = "A face fusion tool for video and image processing"
+authors = [
+    {name = "FaceFusion Team", email = "contact@facefusion.io"}
+]
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "gradio-rangeslider>=0.0.8",
+    "gradio>=5.25.2",
+    "numpy>=2.2.4",
+    "onnx>=1.17.0",
+    "onnxruntime>=1.22.0",
+    "opencv-python>=4.11.0",
+    "psutil>=7.0.0",
+    "tqdm>=4.67.1",
+    "scipy>=1.15.2",
+]
+
+[project.scripts]
+facefusion = "facefusion.core:cli"
+
+[project.urls]
+Homepage = "https://github.com/facefusion/facefusion"
+Repository = "https://github.com/facefusion/facefusion"
+Issues = "https://github.com/facefusion/facefusion/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["facefusion*"]
+
+[tool.setuptools.package-data]
+facefusion = ["uis/assets/*"]

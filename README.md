@@ -19,6 +19,30 @@ Installation
 
 Be aware, the [installation](https://docs.facefusion.io/installation) needs technical skills and is not recommended for beginners. In case you are not comfortable using a terminal, our [Windows Installer](http://windows-installer.facefusion.io) and [macOS Installer](http://macos-installer.facefusion.io) get you started.
 
+### Quick Installation with pipx
+
+For developers and advanced users, you can install FaceFusion using pipx:
+
+```bash
+# Install pipx if you haven't already
+pip install pipx
+pipx ensurepath
+
+# Clone the repository
+git clone https://github.com/facefusion/facefusion.git
+cd facefusion
+
+# Install with pipx
+pipx install .
+```
+
+After installation, you can run FaceFusion from anywhere using:
+```bash
+facefusion
+```
+
+For detailed installation instructions and troubleshooting, see [PIPX_INSTALL.md](PIPX_INSTALL.md).
+
 
 Usage
 -----

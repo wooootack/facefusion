@@ -1,0 +1,8 @@
+include README.md
+include LICENSE.md
+include requirements.txt
+include facefusion.ini
+include facefusion.ico
+include facefusion.py
+recursive-include facefusion/uis/assets *
+recursive-include facefusion *.py
