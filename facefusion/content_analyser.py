@@ -195,27 +195,37 @@ def detect_nsfw(vision_frame : VisionFrame) -> bool:
 
 
 def detect_with_nsfw_1(vision_frame : VisionFrame) -> bool:
+	logger.debug('Starting detect_with_nsfw_1', __name__)
 	detect_vision_frame = prepare_detect_frame(vision_frame, 'nsfw_1')
 	detection = forward_nsfw(detect_vision_frame, 'nsfw_1')
 	detection_score = numpy.max(numpy.amax(detection[:, 4:], axis = 1))
-	return bool(detection_score > 0.2)
+	result = bool(detection_score > 0.2)
+	logger.debug('nsfw_1 detection_score: ' + str(detection_score) + ', result: ' + str(result), __name__)
+	return result
 
 
 def detect_with_nsfw_2(vision_frame : VisionFrame) -> bool:
+	logger.debug('Starting detect_with_nsfw_2', __name__)
 	detect_vision_frame = prepare_detect_frame(vision_frame, 'nsfw_2')
 	detection = forward_nsfw(detect_vision_frame, 'nsfw_2')
 	detection_score = detection[0] - detection[1]
-	return bool(detection_score > 0.25)
+	result = bool(detection_score > 0.25)
+	logger.debug('nsfw_2 detection_score: ' + str(detection_score) + ', result: ' + str(result), __name__)
+	return result
 
 
 def detect_with_nsfw_3(vision_frame : VisionFrame) -> bool:
+	logger.debug('Starting detect_with_nsfw_3', __name__)
 	detect_vision_frame = prepare_detect_frame(vision_frame, 'nsfw_3')
 	detection = forward_nsfw(detect_vision_frame, 'nsfw_3')
 	detection_score = (detection[2] + detection[3]) - (detection[0] + detection[1])
-	return bool(detection_score > 10.5)
+	result = bool(detection_score > 10.5)
+	logger.debug('nsfw_3 detection_score: ' + str(detection_score) + ', result: ' + str(result), __name__)
+	return result
 
 
 def forward_nsfw(vision_frame : VisionFrame, nsfw_model : str) -> Detection:
+	logger.debug('Starting forward_nsfw for model: ' + nsfw_model, __name__)
 	content_analyser = get_inference_pool().get(nsfw_model)
 
 	with conditional_thread_semaphore():
@@ -224,21 +234,33 @@ def forward_nsfw(vision_frame : VisionFrame, nsfw_model : str) -> Detection:
 			'input': vision_frame
 		})[0]
 
-	if nsfw_model in [ 'nsfw_2', 'nsfw_3' ]:
-		return detection[0]
+	logger.debug('Raw detection result for ' + nsfw_model + ': ' + str(detection), __name__)
 
+	if nsfw_model in [ 'nsfw_2', 'nsfw_3' ]:
+		result = detection[0]
+		logger.debug('Using detection[0] for ' + nsfw_model + ': ' + str(result), __name__)
+		return result
+
+	logger.debug('Using full detection for ' + nsfw_model + ': ' + str(detection), __name__)
 	return detection
 
 
 def prepare_detect_frame(temp_vision_frame : VisionFrame, model_name : str) -> VisionFrame:
+	logger.debug('Starting prepare_detect_frame for model: ' + model_name, __name__)
 	model_set = create_static_model_set('full').get(model_name)
 	model_size = model_set.get('size')
 	model_mean = model_set.get('mean')
 	model_standard_deviation = model_set.get('standard_deviation')
 
+	logger.debug('Model settings for ' + model_name + ': size=' + str(model_size) + ', mean=' + str(model_mean) + ', std=' + str(model_standard_deviation), __name__)
+
 	detect_vision_frame = fit_frame(temp_vision_frame, model_size)
+	logger.debug('Frame fitted to size: ' + str(detect_vision_frame.shape), __name__)
+
 	detect_vision_frame = detect_vision_frame[:, :, ::-1] / 255.0
 	detect_vision_frame -= model_mean
 	detect_vision_frame /= model_standard_deviation
 	detect_vision_frame = numpy.expand_dims(detect_vision_frame.transpose(2, 0, 1), axis = 0).astype(numpy.float32)
+
+	logger.debug('Final detect_vision_frame shape: ' + str(detect_vision_frame.shape), __name__)
 	return detect_vision_frame
