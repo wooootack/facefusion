@@ -4,7 +4,7 @@ from typing import List, Tuple
 import numpy
 from tqdm import tqdm
 
-from facefusion import inference_manager, state_manager, wording
+from facefusion import inference_manager, state_manager, wording, logger
 from facefusion.download import conditional_download_hashes, conditional_download_sources, resolve_download_url
 from facefusion.execution import has_execution_provider
 from facefusion.filesystem import resolve_relative_path
