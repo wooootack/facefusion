@@ -431,11 +431,18 @@ def conditional_append_reference_faces() -> None:
 def process_image(start_time : float) -> ErrorCode:
 	logger.debug('Starting process_image', __name__)
 	target_path = state_manager.get_item('target_path')
-	logger.debug('Analysing image: ' + str(target_path), __name__)
-	if analyse_image(target_path):
-		logger.debug('Image analysis failed', __name__)
-		return 3
-	logger.debug('Image analysis completed', __name__)
+
+	skip_content_analysis = state_manager.get_item('skip_content_analysis')
+	logger.debug('Skip content analysis: ' + str(skip_content_analysis), __name__)
+
+	if not skip_content_analysis:
+		logger.debug('Analysing image: ' + str(target_path), __name__)
+		if analyse_image(target_path):
+			logger.debug('Image analysis failed', __name__)
+			return 3
+		logger.debug('Image analysis completed', __name__)
+	else:
+		logger.debug('Skipping image analysis', __name__)
 
 	logger.debug(wording.get('clearing_temp'), __name__)
 	clear_temp_directory(target_path)
@@ -504,11 +511,17 @@ def process_video(start_time : float) -> ErrorCode:
 	trim_frame_start, trim_frame_end = restrict_trim_frame(target_path, state_manager.get_item('trim_frame_start'), state_manager.get_item('trim_frame_end'))
 	logger.debug('Trim frames: start=' + str(trim_frame_start) + ', end=' + str(trim_frame_end), __name__)
 
-	logger.debug('Analysing video', __name__)
-	if analyse_video(target_path, trim_frame_start, trim_frame_end):
-		logger.debug('Video analysis failed', __name__)
-		return 3
-	logger.debug('Video analysis completed', __name__)
+	skip_content_analysis = state_manager.get_item('skip_content_analysis')
+	logger.debug('Skip content analysis: ' + str(skip_content_analysis), __name__)
+
+	if not skip_content_analysis:
+		logger.debug('Analysing video', __name__)
+		if analyse_video(target_path, trim_frame_start, trim_frame_end):
+			logger.debug('Video analysis failed', __name__)
+			return 3
+		logger.debug('Video analysis completed', __name__)
+	else:
+		logger.debug('Skipping video analysis', __name__)
 
 	logger.debug(wording.get('clearing_temp'), __name__)
 	clear_temp_directory(target_path)
