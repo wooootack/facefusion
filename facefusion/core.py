@@ -348,51 +348,87 @@ def process_step(job_id : str, step_index : int, step_args : Args) -> bool:
 
 def conditional_process() -> ErrorCode:
 	start_time = time()
+	logger.debug('Starting conditional_process', __name__)
 
 	for processor_module in get_processors_modules(state_manager.get_item('processors')):
+		logger.debug('Running pre_process for: ' + processor_module.__name__, __name__)
 		if not processor_module.pre_process('output'):
+			logger.debug('pre_process failed for: ' + processor_module.__name__, __name__)
 			return 2
+		logger.debug('pre_process completed for: ' + processor_module.__name__, __name__)
 
+	logger.debug('Starting conditional_append_reference_faces', __name__)
 	conditional_append_reference_faces()
+	logger.debug('Completed conditional_append_reference_faces', __name__)
 
-	if is_image(state_manager.get_item('target_path')):
+	target_path = state_manager.get_item('target_path')
+	logger.debug('Target path: ' + str(target_path), __name__)
+	logger.debug('is_image: ' + str(is_image(target_path)), __name__)
+	logger.debug('is_video: ' + str(is_video(target_path)), __name__)
+
+	if is_image(target_path):
+		logger.debug('Processing as image', __name__)
 		return process_image(start_time)
-	if is_video(state_manager.get_item('target_path')):
+	if is_video(target_path):
+		logger.debug('Processing as video', __name__)
 		return process_video(start_time)
 
+	logger.debug('No valid target found', __name__)
 	return 0
 
 
 def conditional_append_reference_faces() -> None:
-	if 'reference' in state_manager.get_item('face_selector_mode') and not get_reference_faces():
+	face_selector_mode = state_manager.get_item('face_selector_mode')
+	logger.debug('Face selector mode: ' + str(face_selector_mode), __name__)
+
+	if 'reference' in face_selector_mode and not get_reference_faces():
+		logger.debug('Appending reference faces', __name__)
 		source_frames = read_static_images(state_manager.get_item('source_paths'))
 		source_faces = get_many_faces(source_frames)
+		logger.debug('Source faces count: ' + str(len(source_faces)), __name__)
 		source_face = get_average_face(source_faces)
-		if is_video(state_manager.get_item('target_path')):
-			reference_frame = read_video_frame(state_manager.get_item('target_path'), state_manager.get_item('reference_frame_number'))
+		logger.debug('Source face found: ' + str(source_face is not None), __name__)
+
+		target_path = state_manager.get_item('target_path')
+		if is_video(target_path):
+			logger.debug('Reading video frame for reference', __name__)
+			reference_frame = read_video_frame(target_path, state_manager.get_item('reference_frame_number'))
 		else:
-			reference_frame = read_image(state_manager.get_item('target_path'))
+			logger.debug('Reading image for reference', __name__)
+			reference_frame = read_image(target_path)
+
 		reference_faces = sort_and_filter_faces(get_many_faces([ reference_frame ]))
+		logger.debug('Reference faces count: ' + str(len(reference_faces)), __name__)
 		reference_face = get_one_face(reference_faces, state_manager.get_item('reference_face_position'))
+		logger.debug('Reference face found: ' + str(reference_face is not None), __name__)
 		append_reference_face('origin', reference_face)
 
 		if source_face and reference_face:
+			logger.debug('Creating abstract reference frames', __name__)
 			for processor_module in get_processors_modules(state_manager.get_item('processors')):
 				abstract_reference_frame = processor_module.get_reference_frame(source_face, reference_face, reference_frame)
 				if numpy.any(abstract_reference_frame):
 					abstract_reference_faces = sort_and_filter_faces(get_many_faces([ abstract_reference_frame ]))
 					abstract_reference_face = get_one_face(abstract_reference_faces, state_manager.get_item('reference_face_position'))
 					append_reference_face(processor_module.__name__, abstract_reference_face)
+		logger.debug('Reference faces processing completed', __name__)
+	else:
+		logger.debug('Skipping reference faces processing', __name__)
 
 
 def process_image(start_time : float) -> ErrorCode:
-	if analyse_image(state_manager.get_item('target_path')):
+	logger.debug('Starting process_image', __name__)
+	target_path = state_manager.get_item('target_path')
+	logger.debug('Analysing image: ' + str(target_path), __name__)
+	if analyse_image(target_path):
+		logger.debug('Image analysis failed', __name__)
 		return 3
+	logger.debug('Image analysis completed', __name__)
 
 	logger.debug(wording.get('clearing_temp'), __name__)
-	clear_temp_directory(state_manager.get_item('target_path'))
+	clear_temp_directory(target_path)
 	logger.debug(wording.get('creating_temp'), __name__)
-	create_temp_directory(state_manager.get_item('target_path'))
+	create_temp_directory(target_path)
 
 	process_manager.start()
 	temp_image_resolution = pack_resolution(restrict_image_resolution(state_manager.get_item('target_path'), unpack_resolution(state_manager.get_item('output_image_resolution'))))
