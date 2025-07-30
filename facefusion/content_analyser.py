@@ -134,18 +134,30 @@ def analyse_stream(vision_frame : VisionFrame, video_fps : Fps) -> bool:
 
 
 def analyse_frame(vision_frame : VisionFrame) -> bool:
-	return detect_nsfw(vision_frame)
+	logger.debug('Starting analyse_frame', __name__)
+	result = detect_nsfw(vision_frame)
+	logger.debug('analyse_frame result: ' + str(result), __name__)
+	return result
 
 
 @lru_cache(maxsize = None)
 def analyse_image(image_path : str) -> bool:
+	logger.debug('Starting analyse_image for: ' + str(image_path), __name__)
 	vision_frame = read_image(image_path)
-	return analyse_frame(vision_frame)
+	logger.debug('Image read successfully', __name__)
+	result = analyse_frame(vision_frame)
+	logger.debug('analyse_image result: ' + str(result), __name__)
+	return result
 
 
 @lru_cache(maxsize = None)
 def analyse_video(video_path : str, trim_frame_start : int, trim_frame_end : int) -> bool:
+	logger.debug('Starting analyse_video for: ' + str(video_path), __name__)
+	logger.debug('Trim frame range: ' + str(trim_frame_start) + ' to ' + str(trim_frame_end), __name__)
+
 	video_fps = detect_video_fps(video_path)
+	logger.debug('Video FPS: ' + str(video_fps), __name__)
+
 	frame_range = range(trim_frame_start, trim_frame_end)
 	rate = 0.0
 	total = 0
@@ -164,15 +176,22 @@ def analyse_video(video_path : str, trim_frame_start : int, trim_frame_end : int
 			progress.set_postfix(rate = rate)
 			progress.update()
 
-	return bool(rate > 10.0)
+	result = bool(rate > 10.0)
+	logger.debug('analyse_video result: ' + str(result) + ' (rate: ' + str(rate) + '%)', __name__)
+	return result
 
 
 def detect_nsfw(vision_frame : VisionFrame) -> bool:
+	logger.debug('Starting detect_nsfw', __name__)
 	is_nsfw_1 = detect_with_nsfw_1(vision_frame)
 	is_nsfw_2 = detect_with_nsfw_2(vision_frame)
 	is_nsfw_3 = detect_with_nsfw_3(vision_frame)
 
-	return not is_nsfw_1 and is_nsfw_2 or is_nsfw_1 and is_nsfw_3 or is_nsfw_2 and is_nsfw_3
+	logger.debug('NSFW detection results: nsfw_1=' + str(is_nsfw_1) + ', nsfw_2=' + str(is_nsfw_2) + ', nsfw_3=' + str(is_nsfw_3), __name__)
+
+	result = not is_nsfw_1 and is_nsfw_2 or is_nsfw_1 and is_nsfw_3 or is_nsfw_2 and is_nsfw_3
+	logger.debug('detect_nsfw final result: ' + str(result), __name__)
+	return result
 
 
 def detect_with_nsfw_1(vision_frame : VisionFrame) -> bool:

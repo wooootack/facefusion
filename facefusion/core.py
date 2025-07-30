@@ -376,10 +376,14 @@ def conditional_process() -> ErrorCode:
 
 	if is_image(target_path):
 		logger.debug('Processing as image', __name__)
-		return process_image(start_time)
+		error_code = process_image(start_time)
+		logger.debug('process_image returned error_code: ' + str(error_code), __name__)
+		return error_code
 	if is_video(target_path):
 		logger.debug('Processing as video', __name__)
-		return process_video(start_time)
+		error_code = process_video(start_time)
+		logger.debug('process_video returned error_code: ' + str(error_code), __name__)
+		return error_code
 
 	logger.debug('No valid target found', __name__)
 	return 0
